@@ -1,7 +1,7 @@
 import requests
 import urllib3
 import stations
-from threading import Thread,Lock
+from threading import Thread, Lock
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -61,8 +61,8 @@ class TrainCollection(object):
 
         def get_price():
             price_url = self.price_temp.format(data_list[2], data_list[16], data_list[17], data_list[-2], self.date)
-            r_p1 = requests.get(price_url, verify=False)
-            price = r_p1.json()['data']
+            r_p = requests.get(price_url, verify=False)
+            price = r_p.json()['data']
             with mutex:
                 self.prices.append(price)
 

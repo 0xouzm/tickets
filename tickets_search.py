@@ -26,7 +26,7 @@ def onBtn():
 
 
 root = tk.Tk()
-root.title('火车票查询系统0.1')
+root.title('火车票查询系统0.2')
 # root.geometry('250x250')
 
 
