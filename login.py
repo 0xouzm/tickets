@@ -30,7 +30,6 @@ def onBtn(a,b,c,d,e,f,g,h,e1,e2,user,root):
         code = (" ".join(list1))
         result = user.captcha_check(code,uname,pwd)
         if result == 1:
-            print('登陆成功')
             root.destroy()
 
         elif result == 0:
@@ -54,9 +53,6 @@ def YanZheng():
      # 创建用户
     user = Login()
     user.captcha()
-
-
-
 
     root = tk.Tk()
     root.title('--用户登陆--')

@@ -277,14 +277,11 @@ class Login(object):
         tk = re.search(r'globalRepeatSubmitToken = \'(.+?)\'',res).group(1)
         leftTicketStr = re.search(r'\'leftTicketStr\':\'(.+?)\'',res).group(1)
         key_check_isChange = re.search(r'\'key_check_isChange\':\'(.+?)\'', res).group(1)
+        leftTickets = re.findall(r"\w+num\':\'[1-9]\d*\'",res)
 
-        ZE_num = re.search(r'\'ZE_num\':\'(.+?)\'', res).group(1)  # 二等座
-        ZY_num = re.search(r'\'ZY_num\':\'(.+?)\'', res).group(1)  # 一等座
-        YZ_num = re.search(r'\'YZ_num\':\'(.+?)\'', res).group(1)  # 硬座票数
-        WZ_num = re.search(r'\'WZ_num\':\'(.+?)\'', res).group(1)  # 无座票数
-
-        if not (int(YZ_num) != -1) or (int(ZE_num) != -1):   # 判断是否存在硬座
-            print('没票了，10秒后自动刷新')
+        if len(leftTickets) == 0:   # 判断是否存在硬座
+            print('没票了，5秒后自动刷新')
+            time.sleep(5)
             self.initDc(date)
 
         else:
@@ -298,24 +295,46 @@ class Login(object):
             for user in users.items():
                 print(user)
 
-            self.checkOrderInfo('3', 'user', 'idnum', 'phone',tk)
-            name = 'user'
-            sfz = 'idnum'
-            phone = 'phone'
-            zw = '3'
+            print(date)
+            print(station_train_code) #车次
+            print(stations.get_name(from_station) ,'-->', stations.get_name(to_station)) #车站名
+            print(re.findall(r"\w+num\':\'[1-9]\d*\'",res))
+            # "yz_num": "1",  # 硬座
+            # "rz_num": "2",  # 软座
+            # "yw_num": "3",  # 硬卧
+            # "rw_num": "4",  # 软卧
+            # "gr_num": "6",  # 高级软卧
+            # "tz_num": "P",  # 特等座
+            # "wz_num": "WZ",  # 无座
+            # "ze_num": "O",  # 二等座
+            # "zy_num": "M",  # 一等座
+            # "swz_num": "9",  # 商务座
+            #  gg_num;
+            #  yb_num;
+            #  qt_num;
+            # 选择座位
+            # 选择乘客
+
+
+            name = '范朝艳'
+            id = '52273119940925758X'
+            phone = ''
+            seat = '1'
+
+            self.checkOrderInfo(seat, name, id, phone,tk)
+
+
 
             ticket_data = self.getQueueCount(leftTicketStr, station_train_code, from_station, to_station, train_location, train_no,
-                          '3',date,tk)  # 确认订单
+                          seat,date,tk)  # 确认订单
 
             print('余票信息',ticket_data)
 
 
-
-
             confirm = input('请确认购买')
             if confirm == '1':
-                oldPassengerStr = name + ",1," + sfz + ",1_"  # 姓名,1,身份证,1_
-                passengerTicketStr = zw + ",0,1," + name + ",1," + sfz + "," + phone + ",N"
+                oldPassengerStr = name + ",1," + id + ",1_"  # 姓名,1,身份证,1_
+                passengerTicketStr = seat + ",0,1," + name + ",1," + id + "," + phone + ",N"
                 self.confirmSingleForQueue(key_check_isChange,leftTicketStr,oldPassengerStr,passengerTicketStr,train_location,tk)
             else:
                 print('购票失败')
@@ -391,8 +410,6 @@ class Login(object):
 
         return user_info
 
-        #显示余票信息、乘客信息
-
 
 
     def checkOrderInfo(self, seat, name, sfz, phone,tk):
@@ -424,8 +441,8 @@ class Login(object):
 def main():
 
     # login
-    username = '@qq.com'
-    password = 'user'
+    username = '344387990@qq.com'
+    password = 'Wjj12345'
     user = Login()
     user.captcha()
     code = input('验证码')
@@ -433,16 +450,16 @@ def main():
 
 
     # search
-    search = Search('重庆', '上海', '2018-07-02')
+    search = Search('重庆', '成都', '2018-07-01')
     result = search.run()
     print(result)
-    # # 查询票价
-    #
-    # # order 选择车次、座位
-    order_sec = parse.unquote(result[1][0])
+    # 查询票价
+
+    # order 选择车次、座位
+    order_sec = parse.unquote(result[2][0])
     user.submit(search.arguments['from_station'], search.arguments['to_station'], order_sec, search.date)
-    # # 座位类型 1是硬座，2是软座，3是硬卧，4是软卧,'9': '商务座, O是高铁二等座，M是高铁一等座，
-    #
+    # 座位类型 1是硬座，2是软座，3是硬卧，4是软卧,'9': '商务座, O是高铁二等座，M是高铁一等座，
+
 
 if __name__ == '__main__':
     main()
