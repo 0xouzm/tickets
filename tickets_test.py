@@ -316,8 +316,8 @@ class Login(object):
             # 选择乘客
 
 
-            name = '范朝艳'
-            id = '52273119940925758X'
+            name = ''
+            id = ''
             phone = ''
             seat = '1'
 
@@ -441,8 +441,8 @@ class Login(object):
 def main():
 
     # login
-    username = '344387990@qq.com'
-    password = 'Wjj12345'
+    username = '@qq.com'
+    password = ''
     user = Login()
     user.captcha()
     code = input('验证码')
