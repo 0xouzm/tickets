@@ -1,6 +1,5 @@
 项目名称：火车票查询（抢票）系统
 
-**终端运行python3 tickets_search.py进行测试**
 
 小组名称：The Zen of Python
 组长：巫家竞

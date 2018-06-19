@@ -1,5 +1,5 @@
 import tkinter as tk
-from tickets_022 import *
+from tickets import *
 import tkinter.messagebox
 
 # -d    动车

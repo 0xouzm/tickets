@@ -298,10 +298,10 @@ class Login(object):
             for user in users.items():
                 print(user)
 
-            self.checkOrderInfo('3', '巫家竞', '500109199203150431', '15702387382',tk)
-            name = '巫家竞'
-            sfz = '500109199203150431'
-            phone = '15702387382'
+            self.checkOrderInfo('3', 'user', 'idnum', 'phone',tk)
+            name = 'user'
+            sfz = 'idnum'
+            phone = 'phone'
             zw = '3'
 
             ticket_data = self.getQueueCount(leftTicketStr, station_train_code, from_station, to_station, train_location, train_no,
