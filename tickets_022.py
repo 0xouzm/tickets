@@ -137,4 +137,4 @@ class Cli(object):
         trains = r.json()['data']['result']
         return TrainCollection(trains, self.options, self.date).search_out()
 
-# Cli('重庆','贵阳','2018-07-01').run()
+# Cli('重庆','成都','2018-06-15').run()
