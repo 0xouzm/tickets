@@ -47,8 +47,6 @@ def onBtn(a,b,c,d,e,f,g,h,e1,e2,user,root):
 
 
 
-
-
 def YanZheng():
      # 创建用户
     user = Login()

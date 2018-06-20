@@ -16,6 +16,33 @@ class  QueryPage(object):
         self.center_page()
         self.layout_frame()
 
+    def parse_train_data(self, data_list):
+        return {
+            "station_train_code": data_list[3],
+            "from_to_station_name": self.get_from_to_station_name(data_list),
+            "start_arrive_time": self.get_start_arrive_time(data_list),
+            "lishi": data_list[10],
+            "business_class_seat": data_list[32] or '--',
+            "first_class_seat": data_list[31] or '--',
+            "second_class_seat": data_list[30] or '--',
+            "super_soft_sleep": data_list[21] or '--',
+            "soft_sleep": data_list[23] or '--',
+            "dong_sleep": data_list[33] or '--',
+            "hard_sleep": data_list[28] or '--',
+            "soft_seat": data_list[24] or '--',
+            "hard_seat": data_list[29] or '--',
+            "no_seat": data_list[26] or '--',
+            "other": data_list[22] or '--'
+        }
+
+    def get_from_to_station_name(self, data_list):
+        from_station_telecode = data_list[6]
+        to_station_telecode = data_list[7]
+        return "\n".join([stations.get_name(from_station_telecode), stations.get_name(to_station_telecode)])
+
+    def get_start_arrive_time(self, data_list):
+        return '\n'.join([data_list[8], data_list[9]])
+
     def left_top_page(self):
         # 定义左上方区域
         self.var_date = StringVar()
@@ -179,8 +206,31 @@ class  QueryPage(object):
             except Exception:
                 tkinter.messagebox.showerror(title='Error', message='请输入有效信息')
 
-            # 删除原节点
+            result_list = []
             for i in trains:
+                
+                m = self.parse_train_data(i)
+                result_list.append([
+                    m["station_train_code"],
+                    m["from_to_station_name"],
+                    m["start_arrive_time"],
+                    m["lishi"],
+                    m["business_class_seat"],
+                    m["first_class_seat"],
+                    m["second_class_seat"],
+                    m["super_soft_sleep"],
+                    m["soft_sleep"],
+                    m["dong_sleep"],
+                    m["hard_sleep"],
+                    m["soft_seat"],
+                    m["hard_seat"],
+                    m["no_seat"],
+                    m["other"]
+                    ])
+
+
+            # 删除原节点
+            for i in result_list:
                 for j in i:
                     if '\n' in j:
                         index_num = i.index(j)
@@ -188,8 +238,8 @@ class  QueryPage(object):
             for _ in map(self.tree.delete, self.tree.get_children("")):
                 pass
             # 更新插入新节点
-            for item in trains:
-                item1 = tuple(item[1:])
+            for item in result_list:
+                item1 = tuple(item)
                 self.tree.insert('',"end", values=item1)
             # self.tree.after(500, self.get_tree)
 

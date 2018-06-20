@@ -47,55 +47,35 @@ class Search(object):
         self.train = TrainCollection(trains, self.options, self.date)
         return self.train.search_out()
 
-class TrainCollection(object):
-    # headers = '车次 车站 时间 历时 商务座 一等座 二等座 高级软卧 软卧 动卧 硬卧 软座 硬座 无座 其他'.split()
-    price_temp = (
-        'https://kyfw.12306.cn/otn/leftTicket/'
-        'queryTicketPrice?train_no={}&'
-        'from_station_no={}&'
-        'to_station_no={}&'
-        'seat_types={}&'
-        'train_date={}')
 
+class TrainCollection(object):
     def __init__(self, raw_trains, options, date):
         self.raw_trains = raw_trains
         self.options = options
         self.date = date
-        self.prices = []
         self.train_num = 0
 
-    def get_from_to_station_name(self, data_list):
-        from_station_telecode = data_list[6]
-        to_station_telecode = data_list[7]
-        return "\n".join([stations.get_name(from_station_telecode), stations.get_name(to_station_telecode)])
 
-    def get_start_arrive_time(self, data_list):
-        return '\n'.join([data_list[8], data_list[9]])
 
-    def parse_train_data(self, data_list):
-        return {
-            'sec':data_list[0],
-            "station_train_code": data_list[3],
-            "from_to_station_name": self.get_from_to_station_name(data_list),
-            "start_arrive_time": self.get_start_arrive_time(data_list),
-            "lishi": data_list[10],
-            "business_class_seat": data_list[32] or '--',
-            "first_class_seat": data_list[31] or '--',
-            "second_class_seat": data_list[30] or '--',
-            "super_soft_sleep": data_list[21] or '--',
-            "soft_sleep": data_list[23] or '--',
-            "dong_sleep": data_list[33] or '--',
-            "hard_sleep": data_list[28] or '--',
-            "soft_seat": data_list[24] or '--',
-            "hard_seat": data_list[29] or '--',
-            "no_seat": data_list[26] or '--',
-            "other": data_list[22] or '--'
-        }
 
     def need_print(self, data_list):
         station_train_code = data_list[3]
         initial = station_train_code[0].lower()
         return not self.options or initial in self.options
+
+    def get_price(self,data_list):
+        price_temp = (
+            'https://kyfw.12306.cn/otn/leftTicket/'
+            'queryTicketPrice?train_no={}&'
+            'from_station_no={}&'
+            'to_station_no={}&'
+            'seat_types={}&'
+            'train_date={}'
+        )
+        price_url = price_temp.format(data_list[2], data_list[16], data_list[17], data_list[-2], self.date)
+        r_p = requests.get(price_url, verify=False)
+        price = r_p.json()['data']
+        return price
 
     @property
     def trains(self):
@@ -103,31 +83,32 @@ class TrainCollection(object):
             data_list = train.split('|')
             if self.need_print(data_list):
                 # self.train_num += 1
-                yield self.parse_train_data(data_list)
+                yield data_list
 
     def search_out(self):
         print(self.date)
         result = []
         for train in self.trains:
-            result.append([
-                train['sec'],
-                train["station_train_code"],
-                train["from_to_station_name"],
-                train["start_arrive_time"],
-                train["lishi"],
-                train["business_class_seat"],
-                train["first_class_seat"],
-                train["second_class_seat"],
-                train["super_soft_sleep"],
-                train["soft_sleep"],
-                train["dong_sleep"],
-                train["hard_sleep"],
-                train["soft_seat"],
-                train["hard_seat"],
-                train["no_seat"],
-                train["other"]
-            ])
-
+            result.append(train)
+            # ([
+            #     train['sec'],
+            #     train["station_train_code"],
+            #     train["from_to_station_name"],
+            #     train["start_arrive_time"],
+            #     train["lishi"],
+            #     train["business_class_seat"],
+            #     train["first_class_seat"],
+            #     train["second_class_seat"],
+            #     train["super_soft_sleep"],
+            #     train["soft_sleep"],
+            #     train["dong_sleep"],
+            #     train["hard_sleep"],
+            #     train["soft_seat"],
+            #     train["hard_seat"],
+            #     train["no_seat"],
+            #     train["other"]
+            # ])
+        print('查询趟次:', len(result))
         return result
 
 
@@ -210,7 +191,7 @@ class Login(object):
                 return 1
 
     # 检测当前账号有没有未完成的订单
-    def submit(self,from_name, to_name, sec, date):
+    def submit(self, from_name, to_name, sec, date):
         # check
         check_url = "https://kyfw.12306.cn/otn/login/checkUser"
         res = self.session.post(check_url, data={"_json_att": ""})
@@ -244,10 +225,11 @@ class Login(object):
         # 请求订票信息
         url = 'https://kyfw.12306.cn/otn/confirmPassenger/initDc'
         res = self.session.post(url, data={"_json_att": ""}).text
-        tk = re.search(r'globalRepeatSubmitToken = \'(.+?)\'',res).group(1)
-        leftTicketStr = re.search(r'\'leftTicketStr\':\'(.+?)\'',res).group(1)
+        tk = re.search(r'globalRepeatSubmitToken = \'(.+?)\'', res).group(1)
+        leftTicketStr = re.search(r'\'leftTicketStr\':\'(.+?)\'', res).group(1)
         key_check_isChange = re.search(r'\'key_check_isChange\':\'(.+?)\'', res).group(1)
         leftTickets = re.findall(r"\w+num\':\'[1-9]\d*\'", res)
+
 
         if len(leftTickets) == 0:  # 判断是否存在硬座
             print('没票了，5秒后自动刷新')
@@ -255,32 +237,51 @@ class Login(object):
             self.initDc(date)
 
         else:
-            station_train_code = re.search(r'\'station_train_code\':\'(.+?)\'', res).group(1)  # 车次号
+            station_train_code = re.search(r'\'station_train_code\':\'(.+?)\'', res).group(1)  # 车次
             from_station = re.search(r'\'from_station\':\'(.+?)\'', res).group(1)  # 出发地
             to_station = re.search(r'\'to_station\':\'(.+?)\'', res).group(1)  # 目的地
             train_location = re.search(r'\'train_location\':\'(.+?)\'', res).group(1)
-            train_no = re.search(r'\'train_no\':\'(.+?)\'', res).group(1)
-            # name, sfz, phone = getPassenger(token, zw)
+            train_no = re.search(r'\'train_no\':\'(.+?)\'', res).group(1) # 车次完整号码
+            start_time = re.search(r'\'start_time\':\'(.+?)\'', res).group(1)
+            arrive_time = re.search(r'\'arrive_time\':\'(.+?)\'', res).group(1)
             users = self.getPassenger(tk)
-
-            for user in users.items():
-                print(user)
+            #返回车次和乘客信息
 
             print(date)
             print(station_train_code)  # 车次
-            print(stations.get_name(from_station), '-->', stations.get_name(to_station))  # 车站名
+            print(stations.get_name(from_station))
+            print(stations.get_name(to_station)) 
             ticket_num = re.findall(r"\w+num\':\'[1-9]\d*\'", res)
-            print(ticket_num)
+            prices = re.findall(r"\w+price\':\'\d\d\d\d\d\'", res)
+            # 价格处理用字符串转float/10
 
+             #显示余票信息、乘客信息
+            # "yz_num": "1",  # 硬座
+            # "rz_num": "2",  # 软座
+            # "yw_num": "3",  # 硬卧
+            # "rw_num": "4",  # 软卧
+            # "gr_num": "6",  # 高级软卧
+            # "tz_num": "P",  # 特等座
+            # "wz_num": "WZ",  # 无座
+            # "ze_num": "O",  # 二等座
+            # "zy_num": "M",  # 一等座
+            # "swz_num": "9",  # 商务座
+            #  gg_num;
+            #  yb_num;
+            #  qt_num;
+            # 选择座位
+            # 选择乘客
+            # 请求
+            # 
+            # 
             name = ''
             id = ''
             phone = ''
             seat = ''
             self.checkOrderInfo(seat, name, id, phone, tk)
 
-
             ticket_data = self.getQueueCount(leftTicketStr, station_train_code, from_station, to_station, train_location, train_no,
-                          '3',date,tk)  # 确认订单
+                          seat,date,tk)  # 确认订单
 
             print('余票信息',ticket_data)
 
@@ -291,7 +292,8 @@ class Login(object):
                 self.confirmSingleForQueue(key_check_isChange,leftTicketStr,oldPassengerStr,passengerTicketStr,train_location,tk)
             else:
                 return
-
+    # def buy_info(self):     
+               
 
     def getPassenger(self,tk):
         user_info = {}
@@ -309,22 +311,7 @@ class Login(object):
 
         return user_info
 
-        #显示余票信息、乘客信息
-        # "yz_num": "1",  # 硬座
-        # "rz_num": "2",  # 软座
-        # "yw_num": "3",  # 硬卧
-        # "rw_num": "4",  # 软卧
-        # "gr_num": "6",  # 高级软卧
-        # "tz_num": "P",  # 特等座
-        # "wz_num": "WZ",  # 无座
-        # "ze_num": "O",  # 二等座
-        # "zy_num": "M",  # 一等座
-        # "swz_num": "9",  # 商务座
-        #  gg_num;
-        #  yb_num;
-        #  qt_num;
-        # 选择座位
-        # 选择乘客
+
 
     def checkOrderInfo(self, seat, name, sfz, phone,tk):
         oldPassengerStr = name + ",1," + sfz + ",1_"
