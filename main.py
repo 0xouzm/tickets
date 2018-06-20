@@ -1,5 +1,5 @@
-
 from welcome import *
+from query_tickets import *
 
 def main():
 
@@ -12,17 +12,8 @@ def main():
 
 
 
-
-
-
-
-
-
-
-
-
     if choice == 0:
-        pass
+        searchWindow()
 
 if __name__ == '__main__':
     main()

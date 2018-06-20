@@ -9,7 +9,6 @@ import re
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 # ****************************************************查询模块******************************************************
 
 class Search(object):
@@ -48,9 +47,8 @@ class Search(object):
         self.train = TrainCollection(trains, self.options, self.date)
         return self.train.search_out()
 
-
 class TrainCollection(object):
-    headers = '车次 车站 时间 历时 商务座 一等座 二等座 高级软卧 软卧 动卧 硬卧 软座 硬座 无座 其他'.split()
+    # headers = '车次 车站 时间 历时 商务座 一等座 二等座 高级软卧 软卧 动卧 硬卧 软座 硬座 无座 其他'.split()
     price_temp = (
         'https://kyfw.12306.cn/otn/leftTicket/'
         'queryTicketPrice?train_no={}&'
@@ -101,28 +99,15 @@ class TrainCollection(object):
 
     @property
     def trains(self):
-        # mutex = Lock()
-        # def get_price():
-        #     price_url = self.price_temp.format(data_list[2], data_list[16], data_list[17], data_list[-2], self.date)
-        #     r_p = requests.get(price_url, verify=False)
-        #     price = r_p.json()['data']
-        #     with mutex:
-        #         self.prices.append(price)
-
         for train in self.raw_trains:
             data_list = train.split('|')
-            # print(data_list)
             if self.need_print(data_list):
-                # t = Thread(target=get_price)
-                # t.start()
-                self.train_num += 1
+                # self.train_num += 1
                 yield self.parse_train_data(data_list)
-
-
 
     def search_out(self):
         print(self.date)
-        result = [self.headers]
+        result = []
         for train in self.trains:
             result.append([
                 train['sec'],
@@ -143,20 +128,10 @@ class TrainCollection(object):
                 train["other"]
             ])
 
-        # while 1:
-        #     if len(self.prices) == self.train_num:
-        #         print('查询趟次:', len(self.prices))
-        #         return result, self.prices
-        print('查询趟次:', len(result)-1)
-        # print(result)
         return result
 
 
-
 # ****************************************************登录购票模块******************************************************
-
-
-
 class Login(object):
 
     locate = ['34,39', '107,43', '182,41', '250,40', '34,114', '100,123', '182,109', '251,116']
@@ -174,7 +149,6 @@ class Login(object):
         f.write(captcha_img.content)
         f.close()
         time.sleep(1)
-
 
     def captcha_check(self, code, username, password):
         answer = ''
@@ -273,14 +247,11 @@ class Login(object):
         tk = re.search(r'globalRepeatSubmitToken = \'(.+?)\'',res).group(1)
         leftTicketStr = re.search(r'\'leftTicketStr\':\'(.+?)\'',res).group(1)
         key_check_isChange = re.search(r'\'key_check_isChange\':\'(.+?)\'', res).group(1)
+        leftTickets = re.findall(r"\w+num\':\'[1-9]\d*\'", res)
 
-        ZE_num = re.search(r'\'ZE_num\':\'(.+?)\'', res).group(1)  # 二等座
-        ZY_num = re.search(r'\'ZY_num\':\'(.+?)\'', res).group(1)  # 一等座
-        YZ_num = re.search(r'\'YZ_num\':\'(.+?)\'', res).group(1)  # 硬座票数
-        WZ_num = re.search(r'\'WZ_num\':\'(.+?)\'', res).group(1)  # 无座票数
-
-        if not (int(YZ_num) != -1) or (int(ZE_num) != -1):   # 判断是否存在硬座
-            print('没票了，10秒后自动刷新')
+        if len(leftTickets) == 0:  # 判断是否存在硬座
+            print('没票了，5秒后自动刷新')
+            time.sleep(5)
             self.initDc(date)
 
         else:
@@ -291,14 +262,22 @@ class Login(object):
             train_no = re.search(r'\'train_no\':\'(.+?)\'', res).group(1)
             # name, sfz, phone = getPassenger(token, zw)
             users = self.getPassenger(tk)
+
             for user in users.items():
                 print(user)
 
-            self.checkOrderInfo('3', 'name', 'id', 'phone',tk)
-            name = 'name'
-            sfz = 'sfz'
-            phone = 'phone'
-            zw = '3'
+            print(date)
+            print(station_train_code)  # 车次
+            print(stations.get_name(from_station), '-->', stations.get_name(to_station))  # 车站名
+            ticket_num = re.findall(r"\w+num\':\'[1-9]\d*\'", res)
+            print(ticket_num)
+
+            name = ''
+            id = ''
+            phone = ''
+            seat = ''
+            self.checkOrderInfo(seat, name, id, phone, tk)
+
 
             ticket_data = self.getQueueCount(leftTicketStr, station_train_code, from_station, to_station, train_location, train_no,
                           '3',date,tk)  # 确认订单
@@ -307,38 +286,69 @@ class Login(object):
 
             confirm = input('请确认购买')
             if confirm == '1':
-                oldPassengerStr = name + ",1," + sfz + ",1_"  # 姓名,1,身份证,1_
-                passengerTicketStr = zw + ",0,1," + name + ",1," + sfz + "," + phone + ",N"
+                oldPassengerStr = name + ",1," + id + ",1_"  # 姓名,1,身份证,1_
+                passengerTicketStr = seat + ",0,1," + name + ",1," + id + "," + phone + ",N"
                 self.confirmSingleForQueue(key_check_isChange,leftTicketStr,oldPassengerStr,passengerTicketStr,train_location,tk)
             else:
                 return
 
-    def confirmSingleForQueue(self, key_check_isChange, leftTicketStr, oldPassengerStr, passengerTicketStr, train_location,tk):
-        url = "https://kyfw.12306.cn/otn/confirmPassenger/confirmSingleForQueue"
+
+    def getPassenger(self,tk):
+        user_info = {}
+        url = "https://kyfw.12306.cn/otn/confirmPassenger/getPassengerDTOs"
+        res = self.session.post(url, data={"_json_att": "", "REPEAT_SUBMIT_TOKEN": tk})
+        res = res.json()['data']['normal_passengers']
+        for info in res:
+            id = info['code']  # id
+            name = info['passenger_name']  # 姓名
+            sex = info['sex_name']  # 性别
+            sfz = info['passenger_id_no']  # 身份证
+            name_type = info['passenger_type_name']  # 人的类别
+            phone = info['mobile_no']  # 电话号码
+            user_info[id] = [name, sex, sfz, name_type, phone]
+
+        return user_info
+
+        #显示余票信息、乘客信息
+        # "yz_num": "1",  # 硬座
+        # "rz_num": "2",  # 软座
+        # "yw_num": "3",  # 硬卧
+        # "rw_num": "4",  # 软卧
+        # "gr_num": "6",  # 高级软卧
+        # "tz_num": "P",  # 特等座
+        # "wz_num": "WZ",  # 无座
+        # "ze_num": "O",  # 二等座
+        # "zy_num": "M",  # 一等座
+        # "swz_num": "9",  # 商务座
+        #  gg_num;
+        #  yb_num;
+        #  qt_num;
+        # 选择座位
+        # 选择乘客
+
+    def checkOrderInfo(self, seat, name, sfz, phone,tk):
+        oldPassengerStr = name + ",1," + sfz + ",1_"
+        passengerTicketStr = seat + ",0,1," + name + ",1," + sfz + "," + phone + ",N"
+        # print(passengerTicketStr)
+        url = "https://kyfw.12306.cn/otn/confirmPassenger/checkOrderInfo"
         payload = {
             "_json_att": "",
-            "choose_seats": "",
-            "dwAll": "N",
-            "key_check_isChange": key_check_isChange,
-            "leftTicketStr": leftTicketStr,
+            "bed_level_order_num": "000000000000000000000000000000",
+            "cancel_flag": 2,
             "oldPassengerStr": oldPassengerStr,
             "passengerTicketStr": passengerTicketStr,
-            "purpose_codes": "00",
             "randCode": "",
             "REPEAT_SUBMIT_TOKEN": tk,
-            "roomType": "00",
-            "seatDetailType": "000",
-            "train_location": train_location,
+            "tour_flag": "dc",
             "whatsSelect": "1"
         }
+        # print(payload)
+        res = self.session.post(url, data=payload)
 
-        msg = self.session.post(url, data=payload)
-
-        if msg.json()['data']['submitStatus']:
-            print("提交订单成功，请及时付款")
+        if res.json()['data']['submitStatus']:
+            print("乘客添加成功，正在返回余票数量。。。")
         else:
-            print("提交订单失败，请重新提交")
-
+            print('乘客信息错误,请重新预订')
 
     def getQueueCount(self, leftTicket, station_train_code, from_station, to_station, train_location, train_no, zw,
                   date,tk):
@@ -365,49 +375,28 @@ class Login(object):
         else:
             print('车票信息获取失败')
 
-
-    def getPassenger(self,tk):
-        user_info = {}
-        url = "https://kyfw.12306.cn/otn/confirmPassenger/getPassengerDTOs"
-        res = self.session.post(url, data={"_json_att": "", "REPEAT_SUBMIT_TOKEN": tk})
-        res = res.json()['data']['normal_passengers']
-        for info in res:
-            id = info['code']  # id
-            name = info['passenger_name']  # 姓名
-            sex = info['sex_name']  # 性别
-            sfz = info['passenger_id_no']  # 身份证
-            name_type = info['passenger_type_name']  # 人的类别
-            phone = info['mobile_no']  # 电话号码
-            user_info[id] = [name, sex, sfz, name_type, phone]
-
-        return user_info
-
-        #显示余票信息、乘客信息
-
-
-
-
-    def checkOrderInfo(self, seat, name, sfz, phone,tk):
-        oldPassengerStr = name + ",1," + sfz + ",1_"
-        passengerTicketStr = seat + ",0,1," + name + ",1," + sfz + "," + phone + ",N"
-        # print(passengerTicketStr)
-        url = "https://kyfw.12306.cn/otn/confirmPassenger/checkOrderInfo"
+    def confirmSingleForQueue(self, key_check_isChange, leftTicketStr, oldPassengerStr, passengerTicketStr, train_location,tk):
+        url = "https://kyfw.12306.cn/otn/confirmPassenger/confirmSingleForQueue"
         payload = {
             "_json_att": "",
-            "bed_level_order_num": "000000000000000000000000000000",
-            "cancel_flag": 2,
+            "choose_seats": "",
+            "dwAll": "N",
+            "key_check_isChange": key_check_isChange,
+            "leftTicketStr": leftTicketStr,
             "oldPassengerStr": oldPassengerStr,
             "passengerTicketStr": passengerTicketStr,
+            "purpose_codes": "00",
             "randCode": "",
             "REPEAT_SUBMIT_TOKEN": tk,
-            "tour_flag": "dc",
+            "roomType": "00",
+            "seatDetailType": "000",
+            "train_location": train_location,
             "whatsSelect": "1"
         }
-        # print(payload)
-        res = self.session.post(url, data=payload)
 
-        if res.json()['data']['submitStatus']:
-            print("乘客添加成功，正在返回余票数量。。。")
+        msg = self.session.post(url, data=payload)
+
+        if msg.json()['data']['submitStatus']:
+            print("提交订单成功，请及时付款")
         else:
-            print('乘客信息错误,请重新预订')
-
+            print("提交订单失败，请重新提交")

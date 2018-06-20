@@ -1,6 +1,8 @@
-import re
-a = '''
-'BXRZ_num':'-1','BXRZ_price':'0','BXYW_num':'-1','BXYW_price':'0','EDRZ_num':'-1','EDRZ_price':'0','EDSR_num':'-1','EDSR_price':'0','ERRB_num':'-1','ERRB_price':'0','GG_num':'-1','GG_price':'0','GR_num':'-1','GR_price':'0','HBRW_num':'-1','HBRW_price':'0','HBRZ_num':'-1','HBRZ_price':'0','HBYW_num':'-1','HBYW_price':'0','HBYZ_num':'-1','HBYZ_price':'0','RW_num':'13','RW_price':'06400','RZ_num':'-1','RZ_price':'0','SRRB_num':'-1','SRRB_price':'0','SWZ_num':'-1','SWZ_price':'0','TDRZ_num':'-1','TDRZ_price':'0','TZ_num':'-1','TZ_price':'0','WZ_num':'262','WZ_price':'02400','WZ_seat_type_code':'1','YB_num':'-1','YB_price':'0','YDRZ_num':'-1','YDRZ_price':'0','YDSR_num':'-1','YDSR_price':'0','YRRB_num':'-1','YRRB_price':'0','YW_num':'164','YW_price':'04080','YYRW_num':'-1','YYRW_price':'0','YZ_num':'659','YZ_price':'02400','ZE_num':'-1','ZE_price':'0','ZY_num':'-1','ZY_price':'0','arrive_time':'1215','control_train_day':'','controlled_train_flag':null,'controlled_train_message':null,'day_difference':null,'end_station_name':null,'end_station_telecode':null,'from_station_name':'\u91CD\u5E86\u5317','from_station_telecode':'CUW','is_support_card':null,'lishi':'29:15','seat_feature':'','start_station_name':null,'start_station_telecode':null,'start_time':'0700','start_train_date':'','station_train_code':'K73','to_station_name':'\u4E0A\u6D77\u5357','to_station_telecode':'SNH','train_class_name':null,'train_no':'7700000K7307','train_seat_feature':'','yp_ex':''
+a= '''batch_nos=&coach_nos=&seat_nos=&passenger_id_types=&passenger_id_nos=&passenger_names=&insure_price_all=&insure_types=&if_buy_insure_only=N&hasBoughtIns=&_json_att=
 '''
-print(re.findall(r"\w+num\':\'[1-9]\d*\'",''))
+# print(a.split('&'))
 
+b= '''batch_nos=&coach_nos=&seat_nos=&passenger_id_types=&passenger_id_nos=&passenger_names=&insure_price_all=&insure_types=&if_buy_insure_only=N&hasBoughtIns=&_json_att=
+'''
+
+print(a==b)
