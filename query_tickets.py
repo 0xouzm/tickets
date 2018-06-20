@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-import datetime
 from tickets import *
 import tkinter.messagebox
 
@@ -9,7 +8,7 @@ class  QueryPage(object):
         self.root = master  # 定义内部变量root
         self.frame_left_top = Frame(width=600, height=100)
         self.frame_right_top = Frame(width=300, height=100)
-        self.frame_center = Frame(width=900, height=400, bg='pink')
+        self.frame_center = Frame(width=900, height=400)
         self.frame_bottom = Frame(width=900, height=50)
         self.menu_bar()
         self.left_top_page()
@@ -24,7 +23,7 @@ class  QueryPage(object):
         self.str1 = str(self.numb.year)+'-'+str('%02d'%self.numb.month)+'-'+str('%02d'%self.numb.day)
         self.var_date.set(self.str1)
         self.left_top_frame = Frame(self.frame_left_top)
-        self.left_top_frame1 = Label(self.frame_left_top, text="出发地", font=('Arial', 10))
+        self.left_top_frame1 = Label(self.frame_left_top, text="出发站", font=('Arial', 10))
         # self.left_e1 = Entry(self.frame_left_top,textvariable=self.sta_station)
         # 创建一个下拉列表
         self.placename1 = StringVar()
@@ -33,7 +32,7 @@ class  QueryPage(object):
                                            '昆明','海口','石家庄','南京','沈阳','成都','哈尔滨','南昌','合肥','呼和浩特',
                                            '武汉','南宁','郑州','乌鲁木齐','兰州','西安','太原','贵阳','银川','西宁')  # 设置下拉列表的值
         # self.placename_Chosen1.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
-        self.left_top_frame2 = Label(self.frame_left_top, text="目的地", font=('Arial', 10))
+        self.left_top_frame2 = Label(self.frame_left_top, text="到达站", font=('Arial', 10))
         # self.left_e2 = Entry(self.frame_left_top,textvariable=self.des_station)
         self.placename2 = StringVar()
         self.placename_Chosen2 = ttk.Combobox(self.frame_left_top, textvariable=self.placename2)
@@ -118,7 +117,7 @@ class  QueryPage(object):
         self.tree.column("n", width=45, anchor="center")
         self.tree.column("o", width=45, anchor="center")
         self.tree.heading("a", text="车次")
-        self.tree.heading("b", text="出发站->目的站")
+        self.tree.heading("b", text="出发站->到达站")
         self.tree.heading("c", text="出发时间->到达时间")
         self.tree.heading("d", text="历时")
         self.tree.heading("e", text="商务座")
@@ -168,16 +167,14 @@ class  QueryPage(object):
             from_station = self.placename_Chosen1.get()
             to_station = self.placename_Chosen2.get()
             date = self.left_e3.get()
-            print(from_station)
-            print(to_station)
-            print(date)
+            # print(from_station)
+            # print(to_station)
+            # print(date)
 
             try:
                 s = Search(from_station, to_station, date, options={'-d': self.d.get(), '-g': self.g.get(), '-k': self.k.get(),
                                                                  '-t': self.t.get(), '-z': self.z.get()})
                 trains = s.run()
-                for i in trains:
-                    print(i)
 
             except Exception:
                 tkinter.messagebox.showerror(title='Error', message='请输入有效信息')
@@ -187,7 +184,7 @@ class  QueryPage(object):
                 for j in i:
                     if '\n' in j:
                         index_num = i.index(j)
-                        i[index_num] = j.replace('\n',' to ')
+                        i[index_num] = j.replace('\n',' -> ')
             for _ in map(self.tree.delete, self.tree.get_children("")):
                 pass
             # 更新插入新节点
