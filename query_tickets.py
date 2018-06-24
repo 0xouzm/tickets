@@ -56,7 +56,7 @@ class QueryPage(object):
         # 创建一个下拉列表
         self.placename1 = StringVar()
         self.placename_Chosen1 = ttk.Combobox(self.frame_left_top, textvariable=self.placename1)
-        self.placename_Chosen1['values'] = ('北京', '上海', '天津', '重庆', '深圳', '广州', '杭州', '福州', '长沙', '济南', '长春',
+        self.placename_Chosen1['values'] = ('北京', '上海', '天津', '重庆', '成都', '深圳', '广州', '杭州', '福州', '长沙', '济南', '长春',
                                             '昆明', '海口', '石家庄', '南京', '沈阳', '成都', '哈尔滨', '南昌', '合肥', '呼和浩特',
                                             '武汉', '南宁', '郑州', '乌鲁木齐', '兰州', '西安', '太原', '贵阳', '银川', '西宁')  # 设置下拉列表的值
         # self.placename_Chosen1.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
@@ -64,7 +64,7 @@ class QueryPage(object):
         # self.left_e2 = Entry(self.frame_left_top,textvariable=self.des_station)
         self.placename2 = StringVar()
         self.placename_Chosen2 = ttk.Combobox(self.frame_left_top, textvariable=self.placename2)
-        self.placename_Chosen2['values'] = ('北京', '上海', '天津', '重庆', '深圳', '广州', '杭州', '福州', '长沙', '济南', '长春',
+        self.placename_Chosen2['values'] = ('北京', '上海', '天津', '重庆', '成都', '深圳', '广州', '杭州', '福州', '长沙', '济南', '长春',
                                             '昆明', '海口', '石家庄', '南京', '沈阳', '成都', '哈尔滨', '南昌', '合肥', '呼和浩特',
                                             '武汉', '南宁', '郑州', '乌鲁木齐', '兰州', '西安', '太原', '贵阳', '银川', '西宁')
         # self.placename_Chosen2.current(0)
