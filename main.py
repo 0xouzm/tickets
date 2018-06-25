@@ -10,5 +10,6 @@ def main():
     if choice == 0:
         searchWindow()
 
+
 if __name__ == '__main__':
     main()

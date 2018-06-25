@@ -55,9 +55,6 @@ class TrainCollection(object):
         self.date = date
         self.train_num = 0
 
-
-
-
     def need_print(self, data_list):
         station_train_code = data_list[3]
         initial = station_train_code[0].lower()
