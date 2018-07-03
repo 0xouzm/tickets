@@ -5,8 +5,9 @@ import tkinter.messagebox
 from login import *
 from urllib import parse
 
+
 class QueryPage(object):
-    def __init__(self, master=None, query_list=[],user=None):
+    def __init__(self, master=None, query_list=[], user=None):
         self.user = user
         self.query_list = query_list
         self.root = master  # 定义内部变量root
@@ -168,7 +169,7 @@ class QueryPage(object):
         # self.vbar.grid(row=0, column=1, sticky=NS)
         self.tree.grid(sticky=EW)
         self.vbar.grid(row=0, column=1, sticky=NS)
-        self.tree.bind('<Double-1>',self.handlerAdaptor(self.onDBClick, user=self.user))
+        self.tree.bind('<Double-1>', self.handlerAdaptor(self.onDBClick, user=self.user))
         # self.tree.bind('<Double-2>',self.get_tree())
 
     def layout_frame(self):
@@ -217,7 +218,7 @@ class QueryPage(object):
 
             result_list = []
             for i in trains:
-                print(i)
+                # print(i)
                 m = self.parse_train_data(i)
                 result_list.append([
                     m["station_train_code"],
@@ -287,14 +288,13 @@ class QueryPage(object):
 
 
 def searchWindow(user):
-    query_list=[]
+    query_list = []
     root = Tk()
     root.title("火车票查询系统")
     root.geometry('+250+50')
-    QueryPage(root, query_list,user)
+    QueryPage(root, query_list, user)
     root.mainloop()
     return query_list
-
 
 
 if __name__ == '__main__':

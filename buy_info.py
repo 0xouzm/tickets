@@ -1,18 +1,6 @@
 import tkinter as tk
-from tickets_test import *
-import re
-from time import sleep
 
 
-# 2018-07-01
-# K503
-# 重庆北
-# 0643
-# 成都东
-# 1053
-# ('3', ['巫家竞', '男', '500109199203150431', '成人', '15702387382'])
-# ('1', ['董哲彤', '男', '50010519951009581X', '成人', ''])
-# ('2', ['范朝艳', '女', '52273119940925758X', '成人', ''])
 # ticket_num: ["RW_num':'1'", "WZ_num':'14'", "YW_num':'101'", "YZ_num':'122'"]
 # price: ["RW_price':'01405'", "WZ_price':'00465'", "YW_price':'00925'", "YZ_price':'00465'"]
 
@@ -100,9 +88,9 @@ def confirm_snp(t_file):
     # 信息提交
     btn = tk.Button(root, text='提交', command=lambda: onbtn(zuowei[v.get() - 1], user1[v2.get() - 1], root))
     btn.pack()
-
     root.mainloop()
     return user1[v2.get() - 1]
+
 
 def onbtn(a, b, root):
     # 获取用户点选数据
@@ -110,16 +98,8 @@ def onbtn(a, b, root):
                "RW_num'": '4', "GR_num'": '6', "TZ_num'": 'P', "WZ_num'": 'WZ', "ZE_num'": 'O', "ZY_num'": 'M',
                "SWZ_num'": '9'}
     ticket = a.split(':')
-    tickinfo = b.insert(0, zuo_wei[ticket[0]])
-
+    b.insert(0, zuo_wei[ticket[0]])
     root.destroy()
-
-
-    # 测试窗口 可删
-    # top = tk.Toplevel()
-    # top.title('购票信息确认')
-    # msg = tk.Message(top, text=b)
-    # msg.pack()
 
 
 if __name__ == '__main__':

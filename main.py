@@ -1,7 +1,5 @@
 from welcome import *
 from query_tickets import *
-from tickets import *
-
 from buy_info import *
 
 
@@ -22,12 +20,10 @@ from buy_info import *
 
 def main():
     choice = DengLu()
-
     if choice == 1:
         user = YanZheng()
-
+        print(user)
         sb_res = searchWindow(user)
-        #
         # order_sec = parse.unquote(datalist[0])
         # from_name = stations.get_name(datalist[6])
         # to_name = stations.get_name(datalist[7])
@@ -53,15 +49,12 @@ def main():
         train_location = sb_res[12]
         train_no = sb_res[13]
         key_check_isChange = sb_res[14]
-        #
         t_file = [date, station_train_code, from_station_name, start_time,
                   to_station_name, arrive_time,
                   users.items(), ticket_num, prices]
-        #
-        # # # 选票界面
+        # 选票界面
         xieqi_res = confirm_snp(t_file)
-        # print(xieqi_res)
-
+        print(xieqi_res)
         seat = xieqi_res[0]
         name = xieqi_res[1]
         id_num = xieqi_res[3]

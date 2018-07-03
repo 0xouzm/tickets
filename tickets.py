@@ -227,7 +227,7 @@ class Login(object):
 
             t_file = [station_train_code, stations.get_name(from_station), start_time,
                       stations.get_name(to_station), arrive_time, ticket_num, prices, users, tk,
-                      leftTicketStr, from_station, to_station, train_location, train_no, key_check_isChange,date]
+                      leftTicketStr, from_station, to_station, train_location, train_no, key_check_isChange, date]
             return t_file
 
     def getPassenger(self, tk):
@@ -243,7 +243,6 @@ class Login(object):
             name_type = info['passenger_type_name']  # 人的类别
             phone = info['mobile_no']  # 电话号码
             user_info[id] = [name, sex, sfz, name_type, phone]
-
         return user_info
 
     def checkOrderInfo(self, seat, name, id_num, phone, tk):

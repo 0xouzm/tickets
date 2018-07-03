@@ -30,6 +30,7 @@ def onBtn(a, b, c, d, e, f, g, h, e1, e2, user, root):
         list1 = map(str, list)
         code = (" ".join(list1))
         result = user.captcha_check(code, uname, pwd)
+
         if result == 1:
             tkinter.messagebox.showinfo(title='提示', message='登录成功')
             root.destroy()
@@ -71,6 +72,7 @@ def YanZheng(user=None):
 
     label2 = tk.Label(root, text='密码:')
     e2 = tk.Entry(root)
+
     e2['show'] = '*'
     label2.grid(row=1, column=0, pady=10)
     e2.grid(row=1, column=1)
@@ -129,7 +131,8 @@ def YanZheng(user=None):
 
     # root.bind('<Button-1>', mouseDownEvent)
     root.mainloop()
-    return user
+    if result == 1:
+        return user
 
 
 if __name__ == '__main__':
