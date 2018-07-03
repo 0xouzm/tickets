@@ -30,7 +30,10 @@ def onBtn(a, b, c, d, e, f, g, h, e1, e2, user, root):
         list1 = map(str, list)
         code = (" ".join(list1))
         result = user.captcha_check(code, uname, pwd)
+<<<<<<< HEAD
 
+=======
+>>>>>>> cd9873d07875207cbfd1357fbe36def9154f6906
         if result == 1:
             tkinter.messagebox.showinfo(title='提示', message='登录成功')
             root.destroy()

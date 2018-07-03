@@ -227,7 +227,11 @@ class Login(object):
 
             t_file = [station_train_code, stations.get_name(from_station), start_time,
                       stations.get_name(to_station), arrive_time, ticket_num, prices, users, tk,
+<<<<<<< HEAD
                       leftTicketStr, from_station, to_station, train_location, train_no, key_check_isChange, date]
+=======
+                      leftTicketStr, from_station, to_station, train_location, train_no, key_check_isChange]
+>>>>>>> cd9873d07875207cbfd1357fbe36def9154f6906
             return t_file
 
     def getPassenger(self, tk):
