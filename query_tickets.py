@@ -5,6 +5,8 @@ import tkinter.messagebox
 from login import *
 from urllib import parse
 
+query_val = 0
+
 
 class QueryPage(object):
     def __init__(self, master=None, query_list=[], user=None):
@@ -169,8 +171,6 @@ class QueryPage(object):
         # self.vbar.grid(row=0, column=1, sticky=NS)
         self.tree.grid(sticky=EW)
         self.vbar.grid(row=0, column=1, sticky=NS)
-        self.tree.bind('<Double-1>', self.handlerAdaptor(self.onDBClick, user=self.user))
-        # self.tree.bind('<Double-2>',self.get_tree())
 
     def layout_frame(self):
         # 整体区域定位布局
@@ -189,9 +189,6 @@ class QueryPage(object):
     def menu_bar(self):
         menubar = Menu(self.root)
         menubar.add_command(label='尊敬的游客，欢迎您进入火车票查询系统')
-        # menubar.add_command(label='预购车票')
-        # menubar.add_command(label='我的足迹')
-        # menubar.add_command(label='关于我们')
         self.root['menu'] = menubar  # 设置菜单栏
 
     def get_tree(self):
@@ -253,8 +250,9 @@ class QueryPage(object):
             # self.tree.after(500, self.get_tree)
 
     def login_user(self):
+        global query_val
+        query_val = 1
         self.root.destroy()
-        YanZheng()
 
     def handlerAdaptor(self, fun, **kwds):
         '''事件处理函数的适配器，相当于中介，那个event是从那里来的呢，我也纳闷，这也许就是python的伟大之处吧'''
@@ -288,13 +286,13 @@ class QueryPage(object):
 
 
 def searchWindow(user):
-    query_list = []
+    query_list=[]
     root = Tk()
     root.title("火车票查询系统")
     root.geometry('+250+50')
     QueryPage(root, query_list, user)
     root.mainloop()
-    return query_list
+    return query_val
 
 
 if __name__ == '__main__':

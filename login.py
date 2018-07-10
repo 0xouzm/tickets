@@ -4,8 +4,10 @@ import tkinter.messagebox
 from tickets import *
 from time import sleep
 
+login_val = 0
 
 def onBtn(a, b, c, d, e, f, g, h, e1, e2, user, root):
+    global login_val
     list = []
     if a > 0:
         list.append(1)
@@ -33,7 +35,9 @@ def onBtn(a, b, c, d, e, f, g, h, e1, e2, user, root):
 
         if result == 1:
             tkinter.messagebox.showinfo(title='提示', message='登录成功')
+            login_val = user
             root.destroy()
+
         elif result == 0:
             tkinter.messagebox.showerror(title='Error', message='用户名或密码错误')
             root.destroy()
@@ -46,6 +50,10 @@ def onBtn(a, b, c, d, e, f, g, h, e1, e2, user, root):
             YanZheng(user)
     else:
         tkinter.messagebox.showerror(title='Error', message='请输入完整信息')
+
+
+def login_ret():
+    return login_val
 
 
 def mouseDownEvent(e):
@@ -131,8 +139,6 @@ def YanZheng(user=None):
 
     # root.bind('<Button-1>', mouseDownEvent)
     root.mainloop()
-    if result == 1:
-        return user
 
 
 if __name__ == '__main__':

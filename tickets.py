@@ -106,7 +106,7 @@ class Login(object):
         f = open('./Images/captcha_img.png', 'wb+')
         f.write(captcha_img.content)
         f.close()
-        # time.sleep(1)
+        time.sleep(1)
 
     def captcha_check(self, code, username, password):
         answer = ''
