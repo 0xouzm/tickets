@@ -19,14 +19,14 @@ def confirm_snp(t_file):
     user = dict(t_file[6])
 
     root = tk.Tk()
-    root.geometry('700x500+500+200')
+    root.geometry('850x550+500+200')
     root.title('购票信息')
     # 列车信息
     l1 = tk.Label(root, text='列车信息(余票信息仅供参考)')
     l1.pack(anchor='nw', ipady=20)
     # 列车信息显示
-    f = tk.Frame(root)
-    f.pack(anchor='nw')
+    f = tk.LabelFrame(root,text = '列车信息')
+    f.pack(anchor = 'w',padx = 100)
 
     l2 = tk.Label(f, text=time)
     l2.pack(side=tk.LEFT)
@@ -46,8 +46,8 @@ def confirm_snp(t_file):
     l7.pack(side=tk.LEFT)
 
     # 座位信息
-    f2 = tk.Frame(root)
-    f2.pack(anchor='nw', ipady=20)
+    f2 = tk.LabelFrame(root,text = '座位信息')
+    f2.pack(anchor = 'w',padx = 100)
     # "YZ_num": "1",  # 硬座
     # "RZ_num": "2",  # 软座
     # "YW_num": "3",  # 硬卧
@@ -74,8 +74,8 @@ def confirm_snp(t_file):
         rb.pack(side=tk.LEFT)
 
     # 乘客信息
-    f3 = tk.Frame(root)
-    f3.pack(anchor='nw', ipady=20)
+    f3 = tk.LabelFrame(root,text = '乘客信息')
+    f3.pack(anchor = 'w',padx = 100)
     user1 = list(user.values())
     v2 = tk.IntVar(root)
     for x in range(len(user)):
@@ -88,6 +88,10 @@ def confirm_snp(t_file):
     # 信息提交
     btn = tk.Button(root, text='提交', command=lambda: onbtn(zuowei[v.get() - 1], user1[v2.get() - 1], root))
     btn.pack()
+
+    root.maxsize(850,550)
+    root.minsize(850,550)
+
     root.mainloop()
     return user1[v2.get() - 1]
 
