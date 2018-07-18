@@ -59,7 +59,7 @@ class TrainCollection(object):
         initial = station_train_code[0].lower()
         return not self.options or initial in self.options
 
-    def get_price(self, data_list):
+    def get_price(self, data_list,date):
         price_temp = (
             'https://kyfw.12306.cn/otn/leftTicket/'
             'queryTicketPrice?train_no={}&'
@@ -68,7 +68,7 @@ class TrainCollection(object):
             'seat_types={}&'
             'train_date={}'
         )
-        price_url = price_temp.format(data_list[2], data_list[16], data_list[17], data_list[-2], self.date)
+        price_url = price_temp.format(data_list[2], data_list[16], data_list[17], data_list[-2], date)
         r_p = requests.get(price_url, verify=False)
         price = r_p.json()['data']
         return price

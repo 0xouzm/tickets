@@ -11,10 +11,11 @@ class QueryPage(object):
         self.user = user
         self.query_list = query_list
         self.root = master  # 定义内部变量root
-        self.frame_left_top = Frame(width=600, height=100)
-        self.frame_right_top = Frame(width=300, height=100)
+
+        self.frame_left_top = Frame(width=650, height=145)
+        self.frame_right_top = Frame(width=100, height=100)
         self.frame_center = Frame(width=900, height=400)
-        self.frame_bottom = Frame(width=900, height=50)
+        self.frame_bottom = Frame(width=900, height=5)
         self.menu_bar()
         self.left_top_page()
         self.right_top_page()
@@ -55,7 +56,7 @@ class QueryPage(object):
         self.str1 = str(self.numb.year) + '-' + str('%02d' % self.numb.month) + '-' + str('%02d' % self.numb.day)
         self.var_date.set(self.str1)
         self.left_top_frame = Frame(self.frame_left_top)
-        self.left_top_frame1 = Label(self.frame_left_top, text="出发站", font=('Arial', 10))
+        self.left_top_frame1 = Label(self.frame_left_top, text="出发站")
         # self.left_e1 = Entry(self.frame_left_top,textvariable=self.sta_station)
         # 创建一个下拉列表
         self.placename1 = StringVar()
@@ -64,7 +65,7 @@ class QueryPage(object):
                                             '昆明', '海口', '石家庄', '南京', '沈阳', '成都', '哈尔滨', '南昌', '合肥', '呼和浩特',
                                             '武汉', '南宁', '郑州', '乌鲁木齐', '兰州', '西安', '太原', '贵阳', '银川', '西宁')  # 设置下拉列表的值
         # self.placename_Chosen1.current(0)  # 设置下拉列表默认显示的值，0为 numberChosen['values'] 的下标值
-        self.left_top_frame2 = Label(self.frame_left_top, text="到达站", font=('Arial', 10))
+        self.left_top_frame2 = Label(self.frame_left_top, text="到达站")
         # self.left_e2 = Entry(self.frame_left_top,textvariable=self.des_station)
         self.placename2 = StringVar()
         self.placename_Chosen2 = ttk.Combobox(self.frame_left_top, textvariable=self.placename2)
@@ -72,7 +73,7 @@ class QueryPage(object):
                                             '昆明', '海口', '石家庄', '南京', '沈阳', '成都', '哈尔滨', '南昌', '合肥', '呼和浩特',
                                             '武汉', '南宁', '郑州', '乌鲁木齐', '兰州', '西安', '太原', '贵阳', '银川', '西宁')
         # self.placename_Chosen2.current(0)
-        self.left_top_frame3 = Label(self.frame_left_top, text="日期", font=('Arial', 10))
+        self.left_top_frame3 = Label(self.frame_left_top, text="日期")
         self.left_e3 = Entry(self.frame_left_top, textvariable=self.var_date)
         # self.left_e3 = Entry(self.frame_left_top,self.date_station)
         # 多选类型，火车类型选择# -d动车 -g高铁 -k快速 -t特快 -z直达
@@ -98,30 +99,30 @@ class QueryPage(object):
         self.placename_Chosen2.grid(row=2, column=3)
         self.left_top_frame3.grid(row=2, column=4, padx=5)
         self.left_e3.grid(row=2, column=5)
-        self.left_top_frame4.grid(row=4, column=0, columnspan=6, pady=30)
-        self.left_top_button1.grid(row=4, column=1, padx=15)
-        self.left_top_button2.grid(row=4, column=2, padx=15)
-        self.left_top_button3.grid(row=4, column=3, padx=15)
-        self.left_top_button4.grid(row=4, column=4, padx=15)
-        self.left_top_button5.grid(row=4, column=5, padx=15)
+        self.left_top_frame4.grid(row=3, column=0, columnspan=6)
+        self.left_top_button1.grid(row=3, column=1, padx=15)
+        self.left_top_button2.grid(row=3, column=2, padx=15)
+        self.left_top_button3.grid(row=3, column=3, padx=15)
+        self.left_top_button4.grid(row=3, column=4, padx=15)
+        self.left_top_button5.grid(row=3, column=5, padx=15)
+
+
+        self.left_top_frame5 = Label(self.frame_left_top, text="双击车票信息查看票价,显示如下：", fg="blue")
+        self.left_top_frame6 = Text(self.frame_left_top, width=100)
+
+
+        self.left_top_frame5.grid(row=4, column=0, columnspan=3)
+        self.left_top_frame6.grid(row=5, column=0, columnspan=10)
 
     def right_top_page(self):
         # 定义右上方区域
-        self.right_top_frame1 = LabelFrame(self.frame_right_top, text="票类选择")
-        # 创建一个IntVar类型的变量，让如下Radiobutton关联在同一个变量
-        self.v = IntVar(self.frame_right_top, value=1)
-        #  设置此控件代表的值，设置此控件关联的变量
-        self.right_top_button1 = Radiobutton(self.right_top_frame1, text='普通票', value=1, variable=self.v)
-        self.right_top_button2 = Radiobutton(self.right_top_frame1, text='学生票', value=0, variable=self.v)
-        self.right_top_button3 = Button(self.frame_right_top, text="查询余票", command=self.get_tree, font=('Arial', 10))
-        self.right_top_label1 = Label(self.frame_right_top, text="切换用户身份", font=('Arial', 10), fg='blue')
-        self.right_top_button4 = Button(self.frame_right_top, text="用户登录", command=self.login_user, font=('Arial', 10))
-        self.right_top_frame1.grid(row=1, column=0)
-        self.right_top_button1.grid(row=0, column=0)
-        self.right_top_button2.grid(row=1, column=0)
+
+        self.right_top_button3 = Button(self.frame_right_top, text="查询余票", command=self.get_tree, font=6)
+        self.right_top_button2 = Button(self.frame_right_top, text="购买余票",
+                                        command=lambda: self.buy_tickets(user=self.user), font=6)
+
         self.right_top_button3.grid(row=1, column=1, padx=20)
-        self.right_top_button4.grid(row=1, column=2, padx=20)
-        self.right_top_label1.grid(row=0, column=2)
+        self.right_top_button2.grid(row=2, column=1, padx=20, pady=20)
 
     def center_page(self):
         # 定义中心列表区域
@@ -169,7 +170,7 @@ class QueryPage(object):
         # self.vbar.grid(row=0, column=1, sticky=NS)
         self.tree.grid(sticky=EW)
         self.vbar.grid(row=0, column=1, sticky=NS)
-        self.tree.bind('<Double-1>', self.handlerAdaptor(self.onDBClick, user=self.user))
+        self.tree.bind('<Double-1>', self.handlerAdaptor(self.onDBClick))
         # self.tree.bind('<Double-2>',self.get_tree())
 
     def layout_frame(self):
@@ -202,7 +203,7 @@ class QueryPage(object):
             print(from_station)
             print(to_station)
             print(date)
-
+            self.date = date
             try:
                 s = Search(from_station, to_station, date,
                            options={'-d': self.d.get(), '-g': self.g.get(), '-k': self.k.get(),
@@ -210,7 +211,6 @@ class QueryPage(object):
                 trains = s.run()
                 global train_info
                 train_info = trains
-
 
             except Exception:
                 tkinter.messagebox.showerror(title='Error', message='请输入有效信息')
@@ -251,24 +251,8 @@ class QueryPage(object):
                 self.tree.insert('', "end", values=item1)
             # self.tree.after(500, self.get_tree)
 
-    def login_user(self):
-        self.root.destroy()
-        YanZheng()
-
-    def handlerAdaptor(self, fun, **kwds):
-        '''事件处理函数的适配器，相当于中介，那个event是从那里来的呢，我也纳闷，这也许就是python的伟大之处吧'''
-        return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
-
-    def onDBClick(self, event, user):
-        item = self.tree.selection()
-        index = item[0]
-        print(index)
-        index_hex = index[1:]
-        print(index_hex)
-        index_four = int(index_hex, 16)
-        # items = self.tree.get_children()
-        trains_info = train_info[int(index_four) - 1]
-
+    def buy_tickets(self, user):
+        trains_info = self.trains_info
         order_sec = parse.unquote(trains_info[0])
         from_name = stations.get_name(trains_info[6])
         to_name = stations.get_name(trains_info[7])
@@ -278,12 +262,63 @@ class QueryPage(object):
         # 预订请求
         sb_res = user.submit(from_name, to_name, order_sec, date)
         if sb_res == -1:
-            tkinter.messagebox.showerror(title='Error', message='预订失败')
+            tkinter.messagebox.showerror(title='Error', message='预订失败，请完成已经预订的订单或重新预订')
 
         else:
             self.query_list.extend(sb_res)
             self.root.destroy()
-        # print(trains_info)
+
+    def handle_price(self, tic_price):
+        L = []
+        if 'P' in tic_price:
+            print('特等座：%s' % tic_price['P'])
+            L.append('特等座：' + '%s' % tic_price['P'] + ' ')
+
+        if 'A9' in tic_price:
+            print('商务座：%s' % tic_price['A9'])
+            L.append('商务座：' + '%s' % tic_price['A9'] + ' ')
+
+        if 'M' in tic_price:
+            print('一等座：%s' % tic_price['M'])
+            L.append('一等座：' + '%s' % tic_price['M'] + ' ')
+
+        if 'O' in tic_price:
+            print('二等座：%s' % tic_price['O'])
+            L.append('二等座：' + '%s' % tic_price['O'] + ' ')
+
+        if 'A4' in tic_price:
+            print('软卧：%s' % tic_price['A4'])
+            L.append('软卧：' + '%s' % tic_price['A4'] + ' ')
+
+        if 'A3' in tic_price:
+            print('硬卧：%s' % tic_price['A3'])
+            L.append('硬卧：' + '%s' % tic_price['A3'] + ' ')
+
+        if 'A1' in tic_price:
+            print('硬座：%s' % tic_price['A1'])
+            L.append('硬座:' + '%s' % tic_price['A1'] + ' ')
+
+        if 'WZ' in tic_price:
+            print('无座：%s' % tic_price['WZ'])
+            L.append('无座：' + '%s' % tic_price['WZ'] + ' ')
+        print(L)
+        self.left_top_frame6.insert(END, L)
+
+    def handlerAdaptor(self, fun, **kwds):
+        return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
+
+    def onDBClick(self, event):
+
+        item = self.tree.selection()[0]
+        v = self.tree.item(item, 'values')
+        s = v[0]
+        for list1 in train_info:
+            if s in list1:
+                self.trains_info = list1
+
+        tic_price = TrainCollection.get_price(self, self.trains_info,self.date)
+        print(tic_price)
+        self.handle_price(tic_price)
 
 
 def bookWindow(user):
