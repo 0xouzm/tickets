@@ -9,32 +9,41 @@ def confirm_snp(t_file):
     checi = t_file[1]
     start_station = t_file[2]
     start_time = t_file[3]
+    start_time = start_time[:2]+':'+start_time[2:]
     stop_station = t_file[4]
     stop_time = t_file[5]
+    stop_time = stop_time[:2] + ':' + stop_time[2:]
     zuowei = t_file[7]
     user = dict(t_file[6])
     prices = t_file[8]
 
     checixinxi = [checi, start_station, start_time, stop_station, stop_time]
     root = tk.Tk()
-    root.geometry('850x450+500+200')
+    # root.geometry('830x350+500+200')
     root.title('购票信息')
+    root.resizable(width=False,height=False)
     # 列车信息
-    l1 = tk.Label(root, text='列车信息(余票信息仅供参考)')
-    l1.pack(anchor='nw', ipady=20)
+    # l1 = tk.Label(root, text='列车信息(余票信息仅供参考)')
+    # l1.pack(anchor='nw', ipady=20)
+    ff = tk.LabelFrame(root,text ='列车信息(余票信息仅供参考)')
+    ff.pack()
+    la1 = tk.Label(ff,text='－－－－－－－车次信息－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－')
+    la1.pack(anchor='w', padx=100,pady = 10)
+    # can1 = tk.Canvas(ff,bg = 'blue')
+    # can1.pack()
     # 列车信息显示
-    f = tk.LabelFrame(root, text='列车信息')
-    f.pack(anchor='w', padx=100)
+    f = tk.Frame(ff)
+    f.pack(anchor='w', padx=100,pady = 10)
 
-    l2 = tk.Label(f, text=time)
+    l2 = tk.Label(f, text=time+' ')
     l2.pack(side=tk.LEFT)
-    l3 = tk.Label(f, text=checi)
+    l3 = tk.Label(f, text=checi+' ')
     l3.pack(side=tk.LEFT)
 
     l4 = tk.Label(f, text=start_station)
     l4.pack(side=tk.LEFT)
 
-    l5 = tk.Label(f, text=start_time)
+    l5 = tk.Label(f, text=start_time+'  --> ')
     l5.pack(side=tk.LEFT)
 
     l6 = tk.Label(f, text=stop_station)
@@ -43,9 +52,11 @@ def confirm_snp(t_file):
     l7 = tk.Label(f, text=stop_time)
     l7.pack(side=tk.LEFT)
 
+    la2 = tk.Label(ff,text='－－－－－－－票价信息－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－')
+    la2.pack(anchor='w', padx=100,pady = 10)
     # 座位信息
-    f2 = tk.LabelFrame(root, text='座位信息')
-    f2.pack(anchor='w', padx=100)
+    f2 = tk.Frame(ff)
+    f2.pack(anchor='w', padx=100,pady = 10)
     # "YZ_num": "1",  # 硬座
     # "RZ_num": "2",  # 软座
     # "YW_num": "3",  # 硬卧
@@ -64,13 +75,15 @@ def confirm_snp(t_file):
                    "ZY_num'": "一等座", "SWZ_num'": "商务座"}
     v = tk.IntVar(root)
 
+    la3 = tk.Label(ff,text='－－－－－－－乘客信息－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－')
+    la3.pack(anchor='w', padx=100,pady = 10)
+    print('zuowei',zuowei)
     for i in range(len(zuowei)):
-
         s = zuowei[i - 1].split(':')
         p = prices[i - 1].split(':')
         p1 = p[0].split('_')
         s1 = s[0].split('_')
-        regex = re.search(r"'0?(\d+)(\d)'$", p[1])
+        regex = re.search(r"'0+(\d+)(\d)'$", p[1])
         price1 = regex.group(1) + '.' + regex.group(2)
 
         if s[0] in zuo_weidict:
@@ -80,7 +93,7 @@ def confirm_snp(t_file):
         rb.pack(side=tk.LEFT)
 
     # 乘客信息
-    f3 = tk.LabelFrame(root, text='乘客信息')
+    f3 = tk.Frame(ff)
     f3.pack(anchor='w', padx=100)
     user1 = list(user.values())
     v2 = tk.IntVar(root)
@@ -89,14 +102,14 @@ def confirm_snp(t_file):
         rb1 = tk.Radiobutton(f3, text='姓名:' + userinfo[0] + '   性别:' + userinfo[1]
                                       + '   身份证:' + userinfo[2] + '   票种:' + userinfo[3] + '   电话:' + userinfo[4],
                              variable=v2, value=x)
-        rb1.pack(anchor='nw', ipady=20)
+        rb1.pack(anchor='nw', ipady=7)
 
     # 信息提交
-    btn = tk.Button(root, text='提交', command=lambda: onbtn(zuowei[v.get() - 1], user1[v2.get() - 1], checixinxi, root))
-    btn.pack()
+    btn = tk.Button(ff,width= 15, text='提交', command=lambda: onbtn(zuowei[v.get() - 1], user1[v2.get() - 1], checixinxi, root))
+    btn.pack(pady = 20)
 
-    root.maxsize(850, 450)
-    root.minsize(850, 450)
+    # root.maxsize(830, 350)
+    # root.minsize(850, 350)
 
     root.mainloop()
 
