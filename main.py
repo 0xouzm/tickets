@@ -13,6 +13,14 @@ def choice_1():
     if user == 0:
         return
     sb_res = bookWindow(user)
+    # order_sec = parse.unquote(datalist[0])
+    # from_name = stations.get_name(datalist[6])
+    # to_name = stations.get_name(datalist[7])
+    # date = datalist[13]
+    # timeArray = time.strptime(date, "%Y%m%d")
+    # date = time.strftime("%Y-%m-%d", timeArray)
+    # # 预订请求
+    # sb_res = user.submit(from_name, to_name, order_sec, date)  # 这里datalist容易超时，要做异常判断,改到宋振页面申请
     date = sb_res[-1]
     station_train_code = sb_res[0]
     from_station_name = sb_res[1]
