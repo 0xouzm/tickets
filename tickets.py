@@ -59,7 +59,7 @@ class TrainCollection(object):
         initial = station_train_code[0].lower()
         return not self.options or initial in self.options
 
-    def get_price(self, data_list,date):
+    def get_price(self, data_list, date):
         price_temp = (
             'https://kyfw.12306.cn/otn/leftTicket/'
             'queryTicketPrice?train_no={}&'
@@ -91,6 +91,7 @@ class TrainCollection(object):
 
 
 # ****************************************************登录购票模块******************************************************
+
 class Login(object):
     locate = ['34,39', '107,43', '182,41', '250,40', '34,114', '100,123', '182,109', '251,116']
     header = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
@@ -141,7 +142,6 @@ class Login(object):
             }
             print('正在登录中，请稍后...')
             login_res = self.session.post(login_api, headers=self.header, data=login_data)
-            # print(login_res.text)
             login_res = login_res.json()
             if login_res['result_code'] != 0:
                 print('用户名或密码错误，请重新登录')
@@ -172,10 +172,10 @@ class Login(object):
         # check
         check_url = "https://kyfw.12306.cn/otn/login/checkUser"
         res = self.session.post(check_url, data={"_json_att": ""})
-        # print(res.text)
+        print('res', res.text)
         if not res.json()['data']['flag']:
-            print('登录超时，请重新登录')
-            return -1
+            # 登录超时
+            return -2
         else:
             print('验证成功，提交预订信息')
             today = time.strftime('%Y-%m-%d', time.localtime(time.time()))
@@ -193,7 +193,6 @@ class Login(object):
             res = self.session.post(order_url, data=payload)
             # print('预订',res.text)
             if not res.json()['status']:
-                print('预订失败，请完成已经预订的订单或重新预订')
                 return -1
             else:
                 print('正在预订，获取订票信息中。。。')
@@ -261,7 +260,7 @@ class Login(object):
             "tour_flag": "dc",
             "whatsSelect": "1"
         }
-        # print(payload)
+
         res = self.session.post(url, data=payload)
 
         if res.json()['data']['submitStatus']:

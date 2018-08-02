@@ -106,10 +106,8 @@ class QueryPage(object):
         self.left_top_button4.grid(row=3, column=4, padx=15)
         self.left_top_button5.grid(row=3, column=5, padx=15)
 
-
         self.left_top_frame5 = Label(self.frame_left_top, text="双击车票信息查看票价,显示如下：", fg="blue")
-        self.left_top_frame6 = Text(self.frame_left_top, width=100)
-
+        self.left_top_frame6 = Listbox(self.frame_left_top, width=100)
 
         self.left_top_frame5.grid(row=4, column=0, columnspan=3)
         self.left_top_frame6.grid(row=5, column=0, columnspan=10)
@@ -189,10 +187,8 @@ class QueryPage(object):
 
     def menu_bar(self):
         menubar = Menu(self.root)
-        menubar.add_command(label='尊敬的游客，欢迎您进入火车票查询系统')
-        # menubar.add_command(label='预购车票')
-        # menubar.add_command(label='我的足迹')
-        # menubar.add_command(label='关于我们')
+        menubar.add_command(label='欢迎您进入火车票查询系统')
+
         self.root['menu'] = menubar  # 设置菜单栏
 
     def get_tree(self):
@@ -200,9 +196,6 @@ class QueryPage(object):
             from_station = self.placename_Chosen1.get()
             to_station = self.placename_Chosen2.get()
             date = self.left_e3.get()
-            print(from_station)
-            print(to_station)
-            print(date)
             self.date = date
             try:
                 s = Search(from_station, to_station, date,
@@ -217,7 +210,6 @@ class QueryPage(object):
 
             result_list = []
             for i in trains:
-                # print(i)
                 m = self.parse_train_data(i)
                 result_list.append([
                     m["station_train_code"],
@@ -262,7 +254,9 @@ class QueryPage(object):
         # 预订请求
         sb_res = user.submit(from_name, to_name, order_sec, date)
         if sb_res == -1:
-            tkinter.messagebox.showerror(title='Error', message='预订失败，请完成已经预订的订单或重新预订')
+            tkinter.messagebox.showerror(title='Error', message='预订失败，请完成已有订单或重新预订')
+        elif sb_res == -2:
+            tkinter.messagebox.showerror(title='Error', message='登录超时，请重新登录')
 
         else:
             self.query_list.extend(sb_res)
@@ -271,38 +265,32 @@ class QueryPage(object):
     def handle_price(self, tic_price):
         L = []
         if 'P' in tic_price:
-            print('特等座：%s' % tic_price['P'])
             L.append('特等座：' + '%s' % tic_price['P'] + ' ')
 
         if 'A9' in tic_price:
-            print('商务座：%s' % tic_price['A9'])
             L.append('商务座：' + '%s' % tic_price['A9'] + ' ')
 
         if 'M' in tic_price:
-            print('一等座：%s' % tic_price['M'])
             L.append('一等座：' + '%s' % tic_price['M'] + ' ')
 
         if 'O' in tic_price:
-            print('二等座：%s' % tic_price['O'])
             L.append('二等座：' + '%s' % tic_price['O'] + ' ')
 
         if 'A4' in tic_price:
-            print('软卧：%s' % tic_price['A4'])
             L.append('软卧：' + '%s' % tic_price['A4'] + ' ')
 
         if 'A3' in tic_price:
-            print('硬卧：%s' % tic_price['A3'])
             L.append('硬卧：' + '%s' % tic_price['A3'] + ' ')
 
         if 'A1' in tic_price:
-            print('硬座：%s' % tic_price['A1'])
             L.append('硬座:' + '%s' % tic_price['A1'] + ' ')
 
         if 'WZ' in tic_price:
-            print('无座：%s' % tic_price['WZ'])
             L.append('无座：' + '%s' % tic_price['WZ'] + ' ')
-        print(L)
-        self.left_top_frame6.insert(END, L)
+        self.left_top_frame6.delete(0, END)
+
+        L = '  '.join(L)
+        self.left_top_frame6.insert(0, L)
 
     def handlerAdaptor(self, fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
@@ -316,8 +304,7 @@ class QueryPage(object):
             if s in list1:
                 self.trains_info = list1
 
-        tic_price = TrainCollection.get_price(self, self.trains_info,self.date)
-        print(tic_price)
+        tic_price = TrainCollection.get_price(self, self.trains_info, self.date)
         self.handle_price(tic_price)
 
 
